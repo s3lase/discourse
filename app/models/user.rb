@@ -486,6 +486,7 @@ class User < ActiveRecord::Base
 
   def reload
     @unread_notifications = nil
+    @all_unread_notifications = nil
     @unread_total_notifications = nil
     @unread_pms = nil
     @unread_bookmarks = nil
@@ -534,6 +535,25 @@ class User < ActiveRecord::Base
 
     # to avoid coalesce we do to_i
     DB.query_single(sql, user_id: id, high_priority: high_priority)[0].to_i
+  end
+
+  MAX_UNREAD_HIGH_PRI_BACKLOG = 200
+  def grouped_unread_high_priority_notifications
+    results = DB.query(<<~SQL, user_id: self.id, limit: MAX_UNREAD_HIGH_PRI_BACKLOG)
+      SELECT X.notification_type AS type, COUNT(*) FROM (
+        SELECT n.notification_type
+        FROM notifications n
+        LEFT JOIN topics t ON t.id = n.topic_id
+        WHERE t.deleted_at IS NULL
+          AND n.high_priority
+          AND n.user_id = :user_id
+          AND NOT n.read
+        LIMIT :limit
+      ) AS X
+      GROUP BY X.notification_type
+    SQL
+    results.map! { |row| [row.type, row.count] }
+    results.to_h
   end
 
   ###
@@ -586,8 +606,39 @@ class User < ActiveRecord::Base
     end
   end
 
+  def all_unread_notifications
+    @all_unread_notifications ||= begin
+      sql = <<~SQL
+        SELECT COUNT(*) FROM (
+          SELECT 1 FROM
+          notifications n
+          LEFT JOIN topics t ON t.id = n.topic_id
+           WHERE t.deleted_at IS NULL AND
+            n.user_id = :user_id AND
+            n.id > :seen_notification_id AND
+            NOT read
+          LIMIT :limit
+        ) AS X
+      SQL
+
+      DB.query_single(sql,
+        user_id: id,
+        seen_notification_id: seen_notification_id,
+        limit: User.max_unread_notifications
+      )[0].to_i
+    end
+  end
+
   def total_unread_notifications
     @unread_total_notifications ||= notifications.where("read = false").count
+  end
+
+  def reviewable_count
+    Reviewable.list_for(self).count
+  end
+
+  def unseen_reviewable_count
+    Reviewable.unseen_list_for(self).count
   end
 
   def saw_notification_id(notification_id)
@@ -596,6 +647,24 @@ class User < ActiveRecord::Base
       true
     else
       false
+    end
+  end
+
+  def bump_last_seen_reviewable!
+    max_reviewable_id = Reviewable
+      .unseen_list_for(self, preload: false, limit: 1)
+      .except(:order)
+      .order(id: :desc)
+      .pluck(:id)
+      .first
+
+    if max_reviewable_id && (!last_seen_reviewable_id || max_reviewable_id > last_seen_reviewable_id)
+      update!(last_seen_reviewable_id: max_reviewable_id)
+      MessageBus.publish(
+        "/reviewable_counts",
+        { unseen_reviewable_count: self.unseen_reviewable_count },
+        user_ids: [self.id]
+      )
     end
   end
 
@@ -657,6 +726,11 @@ class User < ActiveRecord::Base
       recent: recent,
       seen_notification_id: seen_notification_id,
     }
+
+    if self.redesigned_user_menu_enabled?
+      payload[:all_unread_notifications] = all_unread_notifications
+      payload[:grouped_unread_high_priority_notifications] = grouped_unread_high_priority_notifications
+    end
 
     MessageBus.publish("/notification/#{id}", payload, user_ids: [id])
   end
@@ -1551,6 +1625,24 @@ class User < ActiveRecord::Base
 
   def has_status?
     user_status && !user_status.expired?
+  end
+
+  def self.redesigned_menu_ids
+    Discourse.redis.keys("redesigned_user_menu_for_user_*").map do |key|
+      key.sub("redesigned_user_menu_for_user_", "").to_i
+    end
+  end
+
+  def redesigned_user_menu_enabled?
+    Discourse.redis.get("redesigned_user_menu_for_user_#{self.id}") == "1"
+  end
+
+  def enable_redesigned_user_menu
+    Discourse.redis.setex("redesigned_user_menu_for_user_#{self.id}", 6.months, "1")
+  end
+
+  def disable_redesigned_user_menu
+    Discourse.redis.del("redesigned_user_menu_for_user_#{self.id}")
   end
 
   protected

@@ -228,7 +228,6 @@ class Notification < ActiveRecord::Base
     notifications = notifications.to_a
 
     if notifications.present?
-
       ids = DB.query_single(<<~SQL, limit: count.to_i)
          SELECT n.id FROM notifications n
          WHERE
