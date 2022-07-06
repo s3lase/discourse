@@ -100,7 +100,7 @@ describe SpamRule::AutoSilence do
       it 'prevents the user from making new posts' do
         subject.silence_user
         expect(user).to be_silenced
-        expect(Guardian.new(user).can_create_post?(nil)).to be_falsey
+        expect(Guardian.new(user)).not_to be_can_create_post(nil)
       end
 
       context "with a moderator" do

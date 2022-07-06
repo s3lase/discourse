@@ -2501,14 +2501,14 @@ describe Topic do
     context "when Topic count is greater than minimum_topics_similar" do
       it "should be true" do
         Topic.stubs(:count).returns(30)
-        expect(Topic.count_exceeds_minimum?).to be_truthy
+        expect(Topic).to be_count_exceeds_minimum
       end
     end
 
     context "when topic's count is less than minimum_topics_similar" do
       it "should be false" do
         Topic.stubs(:count).returns(10)
-        expect(Topic.count_exceeds_minimum?).to_not be_truthy
+        expect(Topic).not_to be_count_exceeds_minimum
       end
     end
 

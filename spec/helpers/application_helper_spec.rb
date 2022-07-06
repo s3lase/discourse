@@ -227,7 +227,7 @@ describe ApplicationHelper do
         it "is false if user agent is not mobile" do
           session[:mobile_view] = '1'
           controller.request.stubs(:user_agent).returns('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-          expect(helper.mobile_view?).to be_falsey
+          expect(helper).not_to be_mobile_view
         end
 
         it "is true for iPhone" do
@@ -240,7 +240,7 @@ describe ApplicationHelper do
       context "mobile_view is not set" do
         it "is false if user agent is not mobile" do
           controller.request.stubs(:user_agent).returns('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36')
-          expect(helper.mobile_view?).to be_falsey
+          expect(helper).not_to be_mobile_view
         end
 
         it "is true for iPhone" do
@@ -265,12 +265,12 @@ describe ApplicationHelper do
 
         it "is false for Nexus 10 tablet" do
           controller.request.stubs(:user_agent).returns("Mozilla/5.0 (Linux; Android 5.1.1; Nexus 10 Build/LMY49G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.91 Safari/537.36")
-          expect(helper.mobile_view?).to be_falsey
+          expect(helper).not_to be_mobile_view
         end
 
         it "is false for Nexus 7 tablet" do
           controller.request.stubs(:user_agent).returns("Mozilla/5.0 (Linux; Android 6.0.1; Nexus 7 Build/MMB29Q) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.91 Safari/537.36")
-          expect(helper.mobile_view?).to be_falsey
+          expect(helper).not_to be_mobile_view
         end
       end
     end

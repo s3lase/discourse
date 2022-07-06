@@ -12,8 +12,8 @@ RSpec/MultipleExpectations:
 
 # Offense count: 4137
 # This cop supports safe autocorrection (--autocorrect).
-# RSpec/BeEq:
-#   Enabled: false
+RSpec/BeEq:
+  Enabled: false
 
 # Offense count: 2488
 # This cop supports unsafe autocorrection (--autocorrect-all).

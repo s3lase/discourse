@@ -1860,7 +1860,7 @@ describe Post do
       # ensure that :skip_topic_stats did not get merged with the message
       other_message = messages.select { |msg| msg.data[:type] == :anything }.first
       expect(other_message).to be_present
-      expect(other_message.data.key?(:skip_topic_stats)).to be_falsey
+      expect(other_message.data).not_to be_key(:skip_topic_stats)
     end
   end
 

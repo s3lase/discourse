@@ -157,7 +157,7 @@ describe ThemeSettingsManager do
       upload_setting.value = upload.url
       theme.reload
 
-      expect(ThemeSetting.exists?(theme_id: theme.id, name: "upload_setting", value: upload.id.to_s)).to be_truthy
+      expect(ThemeSetting).to exist(theme_id: theme.id, name: "upload_setting", value: upload.id.to_s)
     end
 
     it "returns the CDN URL" do

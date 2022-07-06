@@ -83,19 +83,19 @@ describe GroupMessage do
     describe 'sent_recently?' do
       it 'returns true if redis says so' do
         Discourse.redis.stubs(:get).with(group_message.sent_recently_key).returns('1')
-        expect(group_message.sent_recently?).to be_truthy
+        expect(group_message).to be_sent_recently
       end
 
       it 'returns false if redis returns nil' do
         Discourse.redis.stubs(:get).with(group_message.sent_recently_key).returns(nil)
-        expect(group_message.sent_recently?).to be_falsey
+        expect(group_message).not_to be_sent_recently
       end
 
       it 'always returns false if limit_once_per is false' do
         gm = GroupMessage.new(moderators_group, :user_automatically_silenced, user: user, limit_once_per: false)
         gm.stubs(:sent_recently_key).returns('the_key')
         Discourse.redis.stubs(:get).with(gm.sent_recently_key).returns('1')
-        expect(gm.sent_recently?).to be_falsey
+        expect(gm).not_to be_sent_recently
       end
     end
 

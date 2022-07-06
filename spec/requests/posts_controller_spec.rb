@@ -419,7 +419,7 @@ describe PostsController do
         PostDestroyer.new(user, post).destroy
         put "/posts/#{post.id}/recover.json"
         post.reload
-        expect(post.trashed?).to be_falsey
+        expect(post).not_to be_trashed
       end
     end
   end

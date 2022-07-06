@@ -108,24 +108,24 @@ describe SiteSettings::DefaultsProvider do
     end
 
     it "returns true when it's present in the cache" do
-      expect(settings.defaults.has_setting?(:r)).to be_truthy
+      expect(settings.defaults).to have_setting(:r)
     end
 
     it '"responds when the arg is string' do
-      expect(settings.defaults.has_setting?('r')).to be_truthy
+      expect(settings.defaults).to have_setting('r')
     end
 
     it 'default_locale always exists' do
-      expect(settings.defaults.has_setting?(:default_locale)).to be_truthy
+      expect(settings.defaults).to have_setting(:default_locale)
     end
 
     it 'returns false when the key is not exist' do
-      expect(settings.defaults.has_setting?('no_key')).to be_falsey
+      expect(settings.defaults).not_to have_setting('no_key')
     end
 
     it 'checks name with question mark' do
-      expect(settings.defaults.has_setting?(:question)).to be_truthy
-      expect(settings.defaults.has_setting?('question')).to be_truthy
+      expect(settings.defaults).to have_setting(:question)
+      expect(settings.defaults).to have_setting('question')
     end
   end
 

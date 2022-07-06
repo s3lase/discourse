@@ -73,7 +73,7 @@ describe SecondFactor::Actions::DiscourseConnectProvider do
       request = create_request(sso.payload)
       params = params_from_payload(sso.payload)
       action = create_instance(user, request)
-      expect(action.skip_second_factor_auth?(params)).to be_falsey
+      expect(action).not_to be_skip_second_factor_auth(params)
     end
   end
 

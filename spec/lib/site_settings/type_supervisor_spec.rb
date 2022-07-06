@@ -13,8 +13,8 @@ describe SiteSettings::TypeSupervisor do
 
   describe 'constants' do
     it 'validator opts are the subset of consumed opts' do
-      expect(Set.new(SiteSettings::TypeSupervisor::CONSUMED_OPTS).superset?(
-        Set.new(SiteSettings::TypeSupervisor::VALIDATOR_OPTS))).to be_truthy
+      expect(Set.new(SiteSettings::TypeSupervisor::CONSUMED_OPTS)).to be_superset(
+        Set.new(SiteSettings::TypeSupervisor::VALIDATOR_OPTS))
     end
   end
 

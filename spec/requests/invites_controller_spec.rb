@@ -550,7 +550,7 @@ describe InvitesController do
       it 'destroys the invite' do
         delete '/invites.json', params: { id: invite.id }
         expect(response.status).to eq(200)
-        expect(invite.reload.trashed?).to be_truthy
+        expect(invite.reload).to be_trashed
       end
     end
   end
@@ -597,7 +597,7 @@ describe InvitesController do
 
       it 'redeems the invite' do
         put "/invites/show/#{invite.invite_key}.json"
-        expect(invite.reload.redeemed?).to be_truthy
+        expect(invite.reload).to be_redeemed
       end
 
       it 'logs in the user' do
@@ -608,7 +608,7 @@ describe InvitesController do
         expect(events.map { |event| event[:event_name] }).to include(:user_logged_in, :user_first_logged_in)
         expect(response.status).to eq(200)
         expect(session[:current_user_id]).to eq(invite.invited_users.first.user_id)
-        expect(invite.reload.redeemed?).to be_truthy
+        expect(invite.reload).to be_redeemed
         user = User.find(invite.invited_users.first.user_id)
         expect(user.ip_address).to be_present
         expect(user.registration_ip_address).to be_present
@@ -880,7 +880,7 @@ describe InvitesController do
         put "/invites/show/#{invite.invite_key}.json"
         expect(response.status).to eq(200)
         expect(invite.reload.invited_users).to be_blank
-        expect(invite.redeemed?).to be_falsey
+        expect(invite).not_to be_redeemed
         expect(response.body).to include(I18n.t('login.new_registrations_disabled'))
       end
     end
@@ -894,7 +894,7 @@ describe InvitesController do
         expect(response.status).to eq(200)
         invite.reload
         expect(invite.invited_users).to be_blank
-        expect(invite.redeemed?).to be_falsey
+        expect(invite).not_to be_redeemed
         expect(response.body).to include(I18n.t('login.already_logged_in', current_user: user.username))
       end
     end
@@ -951,7 +951,7 @@ describe InvitesController do
         }
 
         expect(response.status).to eq(200)
-        expect(invite.reload.redeemed?).to be_truthy
+        expect(invite.reload).to be_redeemed
         user = invite.invited_users.first.user
         expect(user.username).to eq(old_username)
       end
@@ -964,7 +964,7 @@ describe InvitesController do
         }
 
         expect(response.status).to eq(200)
-        expect(invite.reload.redeemed?).to be_truthy
+        expect(invite.reload).to be_redeemed
         user = invite.invited_users.first.user
         expect(user.username).to eq("new_username")
       end

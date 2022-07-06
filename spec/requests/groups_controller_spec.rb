@@ -1011,7 +1011,7 @@ describe GroupsController do
 
           expect(response.status).to eq(200)
           expect(response.parsed_body["success"]).to eq("OK")
-          expect(CategoryUser.exists?(user: user2, category: category, notification_level: 3)).to be_truthy
+          expect(CategoryUser).to exist(user: user2, category: category, notification_level: 3)
         end
       end
     end

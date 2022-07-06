@@ -728,7 +728,7 @@ describe SiteSettingExtension do
 
   describe '.requires_refresh?' do
     it 'always refresh default_locale always require refresh' do
-      expect(settings.requires_refresh?(:default_locale)).to be_truthy
+      expect(settings).to be_requires_refresh(:default_locale)
     end
   end
 
@@ -751,7 +751,7 @@ describe SiteSettingExtension do
 
     it 'expires the cache' do
       settings.default_locale = 'zh_CN'
-      expect(Discourse.cache.exist?(SiteSettingExtension.client_settings_cache_key)).to be_falsey
+      expect(Discourse.cache).not_to exist(SiteSettingExtension.client_settings_cache_key)
     end
 
     it 'refreshes the client' do

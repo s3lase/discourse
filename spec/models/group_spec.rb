@@ -584,9 +584,9 @@ describe Group do
 
     it "manager has authority to edit membership" do
       u = Fabricate(:user)
-      expect(Guardian.new(u).can_edit?(group)).to be_falsy
+      expect(Guardian.new(u)).not_to be_can_edit(group)
       group.add_owner(u)
-      expect(Guardian.new(u).can_edit?(group)).to be_truthy
+      expect(Guardian.new(u)).to be_can_edit(group)
     end
   end
 

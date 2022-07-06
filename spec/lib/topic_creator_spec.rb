@@ -127,8 +127,8 @@ describe TopicCreator do
 
         it "fails for regular user if minimum_required_tags is not satisfied" do
           expect(
-            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id)).valid?
-          ).to be_falsy
+            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id))
+          ).not_to be_valid
         end
 
         it "lets admin create a topic regardless of minimum_required_tags" do
@@ -163,26 +163,26 @@ describe TopicCreator do
 
         it "when no tags are not present" do
           expect(
-            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id)).valid?
-          ).to be_falsy
+            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id))
+          ).not_to be_valid
         end
 
         it "when tags are not part of the tag group" do
           expect(
-            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id, tags: ['nope'])).valid?
-          ).to be_falsy
+            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id, tags: ['nope']))
+          ).not_to be_valid
         end
 
         it "when requirement is met" do
           expect(
-            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id, tags: [tag1.name, tag2.name])).valid?
-          ).to be_truthy
+            TopicCreator.new(user, Guardian.new(user), valid_attrs.merge(category: category.id, tags: [tag1.name, tag2.name]))
+          ).to be_valid
         end
 
         it "lets staff ignore the restriction" do
           expect(
-            TopicCreator.new(user, Guardian.new(admin), valid_attrs.merge(category: category.id)).valid?
-          ).to be_truthy
+            TopicCreator.new(user, Guardian.new(admin), valid_attrs.merge(category: category.id))
+          ).to be_valid
         end
       end
 

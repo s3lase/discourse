@@ -921,12 +921,12 @@ RSpec.describe TopicView do
       pm_topic.topic_allowed_groups = [Fabricate.build(:topic_allowed_group, group: group)]
 
       topic_view = TopicView.new(pm_topic.id, admin)
-      expect(topic_view.show_read_indicator?).to be_truthy
+      expect(topic_view).to be_show_read_indicator
     end
 
     it "does not show read indicator if groups do not have read indicator enabled" do
       topic_view = TopicView.new(pm_topic.id, admin)
-      expect(topic_view.show_read_indicator?).to be_falsey
+      expect(topic_view).not_to be_show_read_indicator
     end
 
     it "does not show read indicator for topics with allowed groups" do
@@ -934,7 +934,7 @@ RSpec.describe TopicView do
       topic.topic_allowed_groups = [Fabricate.build(:topic_allowed_group, group: group)]
 
       topic_view = TopicView.new(topic.id, admin)
-      expect(topic_view.show_read_indicator?).to be_falsey
+      expect(topic_view).not_to be_show_read_indicator
     end
   end
 

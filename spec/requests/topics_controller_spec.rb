@@ -1151,8 +1151,8 @@ RSpec.describe TopicsController do
           topic.reload
           post.reload
           expect(response.status).to eq(200)
-          expect(topic.trashed?).to be_falsey
-          expect(post.trashed?).to be_falsey
+          expect(topic).not_to be_trashed
+          expect(post).not_to be_trashed
         end
       end
     end
@@ -1185,7 +1185,7 @@ RSpec.describe TopicsController do
           delete "/t/#{topic.id}.json"
           expect(response.status).to eq(200)
           topic.reload
-          expect(topic.trashed?).to be_truthy
+          expect(topic).to be_trashed
         end
       end
     end

@@ -246,7 +246,7 @@ RSpec.describe User do
     it "should set default tag preferences when new user created" do
       SiteSetting.default_tags_watching = tag.name
       user = Fabricate(:user)
-      expect(TagUser.exists?(tag_id: tag.id, user_id: user.id, notification_level: TagUser.notification_levels[:watching])).to be_truthy
+      expect(TagUser).to exist(tag_id: tag.id, user_id: user.id, notification_level: TagUser.notification_levels[:watching])
     end
   end
 

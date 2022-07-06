@@ -170,7 +170,7 @@ describe DiscourseUpdates do
     end
 
     it 'can mark features as seen for a given user' do
-      expect(DiscourseUpdates.has_unseen_features?(admin.id)).to be_truthy
+      expect(DiscourseUpdates).to have_unseen_features(admin.id)
 
       DiscourseUpdates.mark_new_features_as_seen(admin.id)
       expect(DiscourseUpdates.has_unseen_features?(admin.id)).to eq(false)

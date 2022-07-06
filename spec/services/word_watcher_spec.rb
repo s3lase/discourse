@@ -29,14 +29,14 @@ describe WordWatcher do
 
   describe "word_matches_for_action?" do
     it "is falsey when there are no watched words" do
-      expect(WordWatcher.new(raw).word_matches_for_action?(:require_approval)).to be_falsey
+      expect(WordWatcher.new(raw)).not_to be_word_matches_for_action(:require_approval)
     end
 
     context "with watched words" do
       fab!(:anise) { Fabricate(:watched_word, word: "anise", action: WatchedWord.actions[:require_approval]) }
 
       it "is falsey without a match" do
-        expect(WordWatcher.new("No liquorice for me, thanks...").word_matches_for_action?(:require_approval)).to be_falsey
+        expect(WordWatcher.new("No liquorice for me, thanks...")).not_to be_word_matches_for_action(:require_approval)
       end
 
       it "is returns matched words if there's a match" do
