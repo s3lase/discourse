@@ -14,9 +14,6 @@ console.log(`Starting Discourse Smoke Test for ${url}`);
 const chromeLauncher = require("chrome-launcher");
 const puppeteer = require("puppeteer-core");
 const path = require("path");
-const weirdLine = ""
-weirdLine = ""
-
 
 (async () => {
   const browser = await puppeteer.launch({
